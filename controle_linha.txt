@@ -1,0 +1,67 @@
+// PROGRAMA DE CONTROLE DE LINHA DE PRODU Ç Ã O - VERS Ã O 1.0
+2 // Data : 02/2025
+3 // Autor : Seu Nome
+4 // Descri ç ã o : Controle b á sico de esteira transportadora com sensor de presen ç a
+5
+6 // DEFINI Ç Ã O DE VARI Á VEIS
+7 VAR
+8 // Entradas digitais
+9 sensor_inicio : BOOL ; // Sensor de presen ç a no in í cio da esteira
+10 sensor_fim : BOOL ; // Sensor de presen ç a no fim da esteira
+11 botao_start : BOOL ; // Bot ã o de in í cio de opera ç ã o
+12 botao_stop : BOOL ; // Bot ão de parada
+13 parada_emergencia : BOOL ; // Bot ã o de parada de emerg ê ncia
+14
+15 // Sa í das digitais
+16 motor_esteira : BOOL ; // Motor da esteira transportadora
+17 luz_verde : BOOL ; // Luz indicadora de opera ç ã o normal
+18 luz_vermelha : BOOL ; // Luz indicadora de parada
+19
+20 // Vari á veis internas
+21 contador_pecas : INT ; // Contador de pe ç as processadas
+22 sistema_ligado : BOOL ; // Estado do sistema
+23 sensor_fim_anterior : BOOL ;
+24 botao_start_anterior : BOOL ;
+25 END_VAR
+26
+27 // L Ó GICA PRINCIPAL
+28
+29 // Verifica ç ã o de parada de emerg ê ncia ( l ó gica invertida - NC )
+30 IF NOT parada_emergencia THEN
+31 sistema_ligado := FALSE ;
+32 luz_vermelha := TRUE ;
+33 luz_verde := FALSE ;
+34 motor_esteira := FALSE ;
+35 ELSE
+36 // L ó gica de partida com borda de subida
+5
+
+37 IF botao_start AND NOT botao_start_anterior THEN
+38 sistema_ligado := TRUE ;
+39 END_IF ;
+40
+41 // L ó gica de parada
+42 IF botao_stop THEN
+43 sistema_ligado := FALSE ;
+44 END_IF ;
+45 END_IF ;
+46
+47 // Controle da esteira e sinaliza ç õ es
+48 IF sistema_ligado THEN
+49 motor_esteira := TRUE ;
+50 luz_verde := TRUE ;
+51 luz_vermelha := FALSE ;
+52 ELSE
+53 motor_esteira := FALSE ;
+54 luz_verde := FALSE ;
+55 luz_vermelha := TRUE ;
+56 END_IF ;
+57
+58 // Contagem de pe ç as ( borda de subida )
+59 IF sensor_fim AND NOT sensor_fim_anterior THEN
+60 contador_pecas := contador_pecas + 1;
+61 END_IF ;
+62
+63 // Atualiza estado anterior do sensor e bot ã o start
+64 sensor_fim_anterior := sensor_fim ;
+65 botao_start_anterior := botao_start ;
